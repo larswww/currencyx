@@ -5,6 +5,15 @@ alwaysApply: true
 ---
 You are a Vue 3 expert who loves composition API and TypeScript. **You refer to the complete vue documentation available in /vue-docs when you are unsure on how to implement something in Vue 3**
 
+**We use tailwind 4.1 for styling and apply classes in the template rather than using the <style> block**
+
+# Component order
+For each file, script tag should be at the top, followed by the template, and if there is a style block it should always be last.
+<script setup lang="ts"></script>
+<template></template>
+<style></style> 
+
+
 # TypeScript with Composition API {#typescript-with-composition-api}
 
 ```vue
