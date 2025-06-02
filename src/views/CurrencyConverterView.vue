@@ -1,211 +1,87 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import CurrencyPanel from '@/components/currency/CurrencyPanel.vue'
 import SwapButton from '@/components/currency/SwapButton.vue'
 import CurrencySelector from '@/components/currency/CurrencySelector.vue'
 import CalculatorKeypad from '@/components/calculator/CalculatorKeypad.vue'
-import { defaultBaseCurrency, defaultTargetCurrency } from '@/data/currencies'
-import type { Currency, ExchangeRate } from '@/types/currency'
+import { useCalculator } from '@/composables/useCalculator'
+import { useCurrency } from '@/composables/useCurrency'
+import { useExchangeRate } from '@/composables/useExchangeRate'
 import type { CalculatorOperation } from '@/types/calculator'
+import type { Currency } from '@/types/currency'
 
-// Reactive state
-const baseCurrency = ref<Currency>(defaultBaseCurrency)
-const targetCurrency = ref<Currency>(defaultTargetCurrency)
-const baseAmount = ref<number>(1)
-const targetAmount = ref<number>(0)
-const exchangeRate = ref<ExchangeRate | null>(null)
-const lastUpdated = ref<Date | null>(null)
-const isConverting = ref(false)
+// Use composables
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const { calculatorState, processCalculatorKey } = useCalculator()
 
-// UI state
-const activePanel = ref<'base' | 'target'>('base')
-const showCurrencySelector = ref(false)
-const activePanelType = ref<'base' | 'target'>('base')
+const {
+  // State
+  baseCurrency,
+  targetCurrency,
+  baseAmount,
+  targetAmount,
+  activePanel,
+  showCurrencySelector,
+  activePanelType,
+  
+  // Methods
+  setActivePanel,
+  updateBaseAmount,
+  updateTargetAmount,
+  updateActiveAmount,
+  swapCurrencies,
+  openCurrencySelector,
+  closeCurrencySelector,
+  handleCurrencySelect
+} = useCurrency()
 
-// Calculator state
-const calculatorExpression = ref('')
+const {
+  exchangeRate,
+  lastUpdated,
+  isConverting,
+  calculateTargetAmount,
+  calculateBaseAmount,
+  fetchExchangeRate,
+  formatTime
+} = useExchangeRate(baseCurrency, targetCurrency, baseAmount, targetAmount)
 
-// Methods
-const setActivePanel = (panel: 'base' | 'target') => {
-  activePanel.value = panel
+// Enhanced currency swap with exchange rate refresh
+const handleSwapCurrencies = () => {
+  swapCurrencies()
+  fetchExchangeRate()
 }
 
-const updateBaseAmount = (amount: number) => {
-  baseAmount.value = amount
+// Enhanced currency selection with exchange rate refresh
+const handleCurrencySelectWithRefresh = (currency: Currency) => {
+  handleCurrencySelect(currency)
+  fetchExchangeRate()
+}
+
+// Calculator integration
+const handleCalculatorKey = (key: string | number | CalculatorOperation) => {
+  const result = processCalculatorKey(key)
+  
+  if (result !== null) {
+    updateActiveAmount(result)
+    
+    // Recalculate the opposite panel based on active panel
+    if (activePanel.value === 'base') {
+      calculateTargetAmount()
+    } else {
+      calculateBaseAmount()
+    }
+  }
+}
+
+// Enhanced amount updates that trigger conversions
+const handleBaseAmountUpdate = (amount: number) => {
+  updateBaseAmount(amount)
   calculateTargetAmount()
 }
 
-const updateTargetAmount = (amount: number) => {
-  targetAmount.value = amount
+const handleTargetAmountUpdate = (amount: number) => {
+  updateTargetAmount(amount)
   calculateBaseAmount()
-}
-
-const calculateTargetAmount = () => {
-  if (exchangeRate.value) {
-    targetAmount.value = baseAmount.value * exchangeRate.value.rate
-  }
-}
-
-const calculateBaseAmount = () => {
-  if (exchangeRate.value) {
-    baseAmount.value = targetAmount.value / exchangeRate.value.rate
-  }
-}
-
-const swapCurrencies = () => {
-  const tempCurrency = baseCurrency.value
-  baseCurrency.value = targetCurrency.value
-  targetCurrency.value = tempCurrency
-
-  // Swap amounts
-  const tempAmount = baseAmount.value
-  baseAmount.value = targetAmount.value
-  targetAmount.value = tempAmount
-
-  // TODO: Fetch new exchange rate
-  fetchExchangeRate()
-}
-
-const openCurrencySelector = (panelType: 'base' | 'target') => {
-  activePanelType.value = panelType
-  showCurrencySelector.value = true
-}
-
-const closeCurrencySelector = () => {
-  showCurrencySelector.value = false
-}
-
-const handleCurrencySelect = (currency: Currency) => {
-  if (activePanelType.value === 'base') {
-    baseCurrency.value = currency
-  } else {
-    targetCurrency.value = currency
-  }
-  closeCurrencySelector()
-  fetchExchangeRate()
-}
-
-const handleCalculatorKey = (key: string | number | CalculatorOperation) => {
-  if (typeof key === 'number') {
-    // Handle number input
-    const currentAmount = activePanel.value === 'base' ? baseAmount.value : targetAmount.value
-    const newAmount = currentAmount === 0 ? key : parseFloat(`${currentAmount}${key}`)
-
-    if (activePanel.value === 'base') {
-      updateBaseAmount(newAmount)
-    } else {
-      updateTargetAmount(newAmount)
-    }
-  } else if (key === 'C') {
-    // Clear
-    if (activePanel.value === 'base') {
-      updateBaseAmount(0)
-    } else {
-      updateTargetAmount(0)
-    }
-    calculatorExpression.value = ''
-  } else if (key === '⌫') {
-    // Backspace
-    const currentAmount = activePanel.value === 'base' ? baseAmount.value : targetAmount.value
-    const amountStr = currentAmount.toString()
-    const newAmountStr = amountStr.length > 1 ? amountStr.slice(0, -1) : '0'
-    const newAmount = parseFloat(newAmountStr)
-
-    if (activePanel.value === 'base') {
-      updateBaseAmount(newAmount)
-    } else {
-      updateTargetAmount(newAmount)
-    }
-  } else if (key === '.') {
-    // Handle decimal point - TODO: implement proper decimal handling
-  } else {
-    // Handle operations (+, -, ×, ÷, =) - TODO: implement calculator logic
-    console.log('Operation:', key)
-  }
-}
-
-const fetchExchangeRate = async () => {
-  // Mock exchange rates for demonstration (realistic rates as of 2024)
-  const mockRates: Record<string, Record<string, number>> = {
-    USD: {
-      EUR: 0.85,
-      GBP: 0.73,
-      JPY: 110.25,
-      CHF: 0.88,
-      CAD: 1.25,
-      AUD: 1.35,
-      CNY: 6.45,
-      INR: 74.5,
-    },
-    EUR: {
-      USD: 1.18,
-      GBP: 0.86,
-      JPY: 129.65,
-      CHF: 1.04,
-      CAD: 1.47,
-      AUD: 1.59,
-      CNY: 7.59,
-      INR: 87.71,
-    },
-    GBP: {
-      USD: 1.37,
-      EUR: 1.16,
-      JPY: 151.04,
-      CHF: 1.21,
-      CAD: 1.71,
-      AUD: 1.85,
-      CNY: 8.84,
-      INR: 102.15,
-    },
-  }
-
-  isConverting.value = true
-
-  // Simulate realistic API delay (200-600ms)
-  const delay = Math.random() * 400 + 200
-
-  await new Promise((resolve) => setTimeout(resolve, delay))
-
-  try {
-    const baseCode = baseCurrency.value.code
-    const targetCode = targetCurrency.value.code
-
-    // Get rate from mock data or calculate inverse
-    let rate = 1
-    if (baseCode === targetCode) {
-      rate = 1
-    } else if (mockRates[baseCode]?.[targetCode]) {
-      rate = mockRates[baseCode][targetCode]
-    } else if (mockRates[targetCode]?.[baseCode]) {
-      rate = 1 / mockRates[targetCode][baseCode]
-    } else {
-      // Fallback: generate a realistic random rate based on currency types
-      rate = 0.5 + Math.random() * 2 // Between 0.5 and 2.5
-    }
-
-    exchangeRate.value = {
-      base: baseCode,
-      target: targetCode,
-      rate: rate,
-      timestamp: new Date(),
-      inverse: 1 / rate,
-    }
-
-    lastUpdated.value = new Date()
-    calculateTargetAmount()
-  } catch (error) {
-    console.error('Failed to fetch exchange rate:', error)
-    // In a real app, you'd show an error message to the user
-  } finally {
-    isConverting.value = false
-  }
-}
-
-const formatTime = (date: Date): string => {
-  return date.toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-  })
 }
 
 // Initialize
@@ -229,14 +105,14 @@ onMounted(() => {
                 :amount="baseAmount"
                 :is-active="activePanel === 'base'"
                 @select-currency="openCurrencySelector('base')"
-                @update-amount="updateBaseAmount"
+                @update-amount="handleBaseAmountUpdate"
                 @focus="setActivePanel('base')"
               />
             </div>
 
             <!-- Swap Button -->
             <div class="flex justify-center">
-              <SwapButton @click="swapCurrencies" :is-loading="isConverting" />
+              <SwapButton @click="handleSwapCurrencies" :is-loading="isConverting" />
             </div>
 
             <!-- Target Currency Panel -->
@@ -246,7 +122,7 @@ onMounted(() => {
                 :amount="targetAmount"
                 :is-active="activePanel === 'target'"
                 @select-currency="openCurrencySelector('target')"
-                @update-amount="updateTargetAmount"
+                @update-amount="handleTargetAmountUpdate"
                 @focus="setActivePanel('target')"
               />
             </div>
@@ -275,7 +151,7 @@ onMounted(() => {
     <CurrencySelector
       v-if="showCurrencySelector"
       :exclude-currency="activePanelType === 'base' ? targetCurrency : baseCurrency"
-      @select="handleCurrencySelect"
+      @select="handleCurrencySelectWithRefresh"
       @close="closeCurrencySelector"
     />
   </div>

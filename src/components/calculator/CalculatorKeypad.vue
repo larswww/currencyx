@@ -23,6 +23,7 @@ defineEmits<Emits>()
         variant="danger"
         size="lg"
         class="col-span-2"
+        data-testid="calc-button-clear"
       >
         Clear
       </BaseButton>
@@ -35,9 +36,16 @@ defineEmits<Emits>()
         icon="⌫"
         icon-position="only"
         aria-label="Backspace"
+        data-testid="calc-button-backspace"
       />
 
-      <BaseButton @click="$emit('keyPress', '÷')" :disabled="disabled" variant="warning" size="lg">
+      <BaseButton 
+        @click="$emit('keyPress', '÷')" 
+        :disabled="disabled" 
+        variant="warning" 
+        size="lg"
+        data-testid="calc-button-divide"
+      >
         ÷
       </BaseButton>
 
@@ -49,11 +57,18 @@ defineEmits<Emits>()
         :disabled="disabled"
         variant="ghost"
         size="lg"
+        :data-testid="`calc-button-${num}`"
       >
         {{ num }}
       </BaseButton>
 
-      <BaseButton @click="$emit('keyPress', '×')" :disabled="disabled" variant="warning" size="lg">
+      <BaseButton 
+        @click="$emit('keyPress', '×')" 
+        :disabled="disabled" 
+        variant="warning" 
+        size="lg"
+        data-testid="calc-button-multiply"
+      >
         ×
       </BaseButton>
 
@@ -65,11 +80,18 @@ defineEmits<Emits>()
         :disabled="disabled"
         variant="ghost"
         size="lg"
+        :data-testid="`calc-button-${num}`"
       >
         {{ num }}
       </BaseButton>
 
-      <BaseButton @click="$emit('keyPress', '-')" :disabled="disabled" variant="warning" size="lg">
+      <BaseButton 
+        @click="$emit('keyPress', '-')" 
+        :disabled="disabled" 
+        variant="warning" 
+        size="lg"
+        data-testid="calc-button-subtract"
+      >
         −
       </BaseButton>
 
@@ -81,6 +103,7 @@ defineEmits<Emits>()
         :disabled="disabled"
         variant="ghost"
         size="lg"
+        :data-testid="`calc-button-${num}`"
       >
         {{ num }}
       </BaseButton>
@@ -91,6 +114,7 @@ defineEmits<Emits>()
         variant="warning"
         size="lg"
         class="row-span-2"
+        data-testid="calc-button-add"
       >
         +
       </BaseButton>
@@ -102,11 +126,18 @@ defineEmits<Emits>()
         variant="ghost"
         size="lg"
         class="col-span-2"
+        data-testid="calc-button-0"
       >
         0
       </BaseButton>
 
-      <BaseButton @click="$emit('keyPress', '.')" :disabled="disabled" variant="ghost" size="lg">
+      <BaseButton 
+        @click="$emit('keyPress', '.')" 
+        :disabled="disabled" 
+        variant="ghost" 
+        size="lg"
+        data-testid="calc-button-decimal"
+      >
         .
       </BaseButton>
     </div>
@@ -119,6 +150,7 @@ defineEmits<Emits>()
       size="lg"
       block
       class="mt-3"
+      data-testid="calc-button-equals"
     >
       =
     </BaseButton>
