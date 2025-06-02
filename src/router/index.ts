@@ -8,8 +8,8 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: CurrencyConverterView,
-    }
-  ]
+    },
+  ],
 })
 
 export default router

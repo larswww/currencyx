@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, useSlots } from 'vue'
+import type { Component } from 'vue'
 import type { ButtonVariant, ButtonSize, ButtonShape, IconPosition } from '@/types/button'
 
 // Props with defaults - Vue 3 composition pattern
@@ -28,7 +29,7 @@ const props = withDefaults(defineProps<Props>(), {
   active: false,
   block: false,
   iconPosition: 'left',
-  type: 'button'
+  type: 'button',
 })
 
 // Emits definition - type-safe events
@@ -57,8 +58,9 @@ const variantClasses = computed(() => {
     danger: 'bg-red-600 hover:bg-red-700 focus:ring-red-500 text-white',
     success: 'bg-green-600 hover:bg-green-700 focus:ring-green-500 text-white',
     warning: 'bg-orange-600 hover:bg-orange-700 focus:ring-orange-500 text-white',
-    ghost: 'bg-transparent hover:bg-gray-600 focus:ring-gray-500 text-gray-300 border border-gray-600',
-    link: 'bg-transparent hover:bg-gray-700 focus:ring-blue-500 text-blue-400 underline'
+    ghost:
+      'bg-transparent hover:bg-gray-600 focus:ring-gray-500 text-gray-300 border border-gray-600',
+    link: 'bg-transparent hover:bg-gray-700 focus:ring-blue-500 text-blue-400 underline',
   }
   return variants[props.variant]
 })
@@ -67,10 +69,10 @@ const variantClasses = computed(() => {
 const sizeClasses = computed(() => {
   const sizes = {
     xs: 'px-2 py-1 text-xs min-h-[32px]',
-    sm: 'px-3 py-1.5 text-sm min-h-[36px]', 
+    sm: 'px-3 py-1.5 text-sm min-h-[36px]',
     md: 'px-4 py-2 text-base min-h-[44px]',
     lg: 'px-6 py-3 text-lg min-h-[52px]',
-    xl: 'px-8 py-4 text-xl min-h-[60px]'
+    xl: 'px-8 py-4 text-xl min-h-[60px]',
   }
   return sizes[props.size]
 })
@@ -81,7 +83,7 @@ const shapeClasses = computed(() => {
     square: 'rounded-none',
     rounded: 'rounded-lg',
     circle: 'rounded-full aspect-square',
-    pill: 'rounded-full'
+    pill: 'rounded-full',
   }
   return shapes[props.shape]
 })
@@ -92,7 +94,7 @@ const stateClasses = computed(() => {
     'opacity-50 cursor-not-allowed': isDisabled.value,
     'ring-2 ring-offset-2 ring-offset-[#2b2b35]': props.active,
     'w-full': props.block,
-    'justify-center': props.iconPosition === 'only' || !hasSlotContent.value
+    'justify-center': props.iconPosition === 'only' || !hasSlotContent.value,
   }
 })
 
@@ -103,12 +105,12 @@ const buttonClasses = computed(() => {
     'inline-flex items-center font-medium transition-all duration-200',
     'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#2b2b35]',
     'disabled:cursor-not-allowed disabled:opacity-50',
-    
+
     // Dynamic classes
     variantClasses.value,
     sizeClasses.value,
     shapeClasses.value,
-    stateClasses.value
+    stateClasses.value,
   ]
 })
 
@@ -120,51 +122,48 @@ const handleClick = (event: MouseEvent) => {
 }
 </script>
 <template>
-    <button
-      :type="type"
-      :disabled="isDisabled"
-      :aria-label="ariaLabel"
-      :class="buttonClasses"
-      @click="handleClick"
-      v-bind="$attrs"
-    >
-      <!-- Loading State -->
-      <div v-if="loading" class="button-loading">
-        <div class="button-spinner" />
-        <span v-if="loadingText && iconPosition !== 'only'" class="ml-2">
-          {{ loadingText }}
-        </span>
+  <button
+    :type="type"
+    :disabled="isDisabled"
+    :aria-label="ariaLabel"
+    :class="buttonClasses"
+    @click="handleClick"
+    v-bind="$attrs"
+  >
+    <!-- Loading State -->
+    <div v-if="loading" class="button-loading">
+      <div class="button-spinner" />
+      <span v-if="loadingText && iconPosition !== 'only'" class="ml-2">
+        {{ loadingText }}
+      </span>
+    </div>
+
+    <!-- Normal State -->
+    <template v-else>
+      <!-- Left Icon -->
+      <div
+        v-if="icon && (iconPosition === 'left' || iconPosition === 'only')"
+        class="button-icon"
+        :class="{ 'mr-2': iconPosition === 'left' && hasSlotContent }"
+      >
+        <!-- You can replace this with your preferred icon system -->
+        <component :is="icon" v-if="typeof icon !== 'string'" />
+        <span v-else v-html="icon" />
       </div>
-      
-      <!-- Normal State -->
-      <template v-else>
-        <!-- Left Icon -->
-        <div
-          v-if="icon && (iconPosition === 'left' || iconPosition === 'only')"
-          class="button-icon"
-          :class="{ 'mr-2': iconPosition === 'left' && hasSlotContent }"
-        >
-          <!-- You can replace this with your preferred icon system -->
-          <component :is="icon" v-if="typeof icon !== 'string'" />
-          <span v-else v-html="icon" />
-        </div>
-        
-        <!-- Button Content -->
-        <span v-if="iconPosition !== 'only' && hasSlotContent" class="button-content">
-          <slot />
-        </span>
-        
-        <!-- Right Icon -->
-        <div
-          v-if="icon && iconPosition === 'right'"
-          class="button-icon ml-2"
-        >
-          <component :is="icon" v-if="typeof icon !== 'string'" />
-          <span v-else v-html="icon" />
-        </div>
-      </template>
-    </button>
-  </template>
+
+      <!-- Button Content -->
+      <span v-if="iconPosition !== 'only' && hasSlotContent" class="button-content">
+        <slot />
+      </span>
+
+      <!-- Right Icon -->
+      <div v-if="icon && iconPosition === 'right'" class="button-icon ml-2">
+        <component :is="icon" v-if="typeof icon !== 'string'" />
+        <span v-else v-html="icon" />
+      </div>
+    </template>
+  </button>
+</template>
 <style scoped>
 @reference "@/assets/main.css";
 .button-loading {
@@ -189,4 +188,4 @@ const handleClick = (event: MouseEvent) => {
     @apply min-h-[44px] min-w-[44px];
   }
 }
-</style> 
+</style>

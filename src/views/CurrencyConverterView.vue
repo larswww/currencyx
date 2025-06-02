@@ -56,12 +56,12 @@ const swapCurrencies = () => {
   const tempCurrency = baseCurrency.value
   baseCurrency.value = targetCurrency.value
   targetCurrency.value = tempCurrency
-  
+
   // Swap amounts
   const tempAmount = baseAmount.value
   baseAmount.value = targetAmount.value
   targetAmount.value = tempAmount
-  
+
   // TODO: Fetch new exchange rate
   fetchExchangeRate()
 }
@@ -90,7 +90,7 @@ const handleCalculatorKey = (key: string | number | CalculatorOperation) => {
     // Handle number input
     const currentAmount = activePanel.value === 'base' ? baseAmount.value : targetAmount.value
     const newAmount = currentAmount === 0 ? key : parseFloat(`${currentAmount}${key}`)
-    
+
     if (activePanel.value === 'base') {
       updateBaseAmount(newAmount)
     } else {
@@ -110,7 +110,7 @@ const handleCalculatorKey = (key: string | number | CalculatorOperation) => {
     const amountStr = currentAmount.toString()
     const newAmountStr = amountStr.length > 1 ? amountStr.slice(0, -1) : '0'
     const newAmount = parseFloat(newAmountStr)
-    
+
     if (activePanel.value === 'base') {
       updateBaseAmount(newAmount)
     } else {
@@ -135,7 +135,7 @@ const fetchExchangeRate = async () => {
       CAD: 1.25,
       AUD: 1.35,
       CNY: 6.45,
-      INR: 74.50
+      INR: 74.5,
     },
     EUR: {
       USD: 1.18,
@@ -145,7 +145,7 @@ const fetchExchangeRate = async () => {
       CAD: 1.47,
       AUD: 1.59,
       CNY: 7.59,
-      INR: 87.71
+      INR: 87.71,
     },
     GBP: {
       USD: 1.37,
@@ -155,21 +155,21 @@ const fetchExchangeRate = async () => {
       CAD: 1.71,
       AUD: 1.85,
       CNY: 8.84,
-      INR: 102.15
-    }
+      INR: 102.15,
+    },
   }
 
   isConverting.value = true
-  
+
   // Simulate realistic API delay (200-600ms)
   const delay = Math.random() * 400 + 200
-  
-  await new Promise(resolve => setTimeout(resolve, delay))
-  
+
+  await new Promise((resolve) => setTimeout(resolve, delay))
+
   try {
     const baseCode = baseCurrency.value.code
     const targetCode = targetCurrency.value.code
-    
+
     // Get rate from mock data or calculate inverse
     let rate = 1
     if (baseCode === targetCode) {
@@ -182,18 +182,17 @@ const fetchExchangeRate = async () => {
       // Fallback: generate a realistic random rate based on currency types
       rate = 0.5 + Math.random() * 2 // Between 0.5 and 2.5
     }
-    
+
     exchangeRate.value = {
       base: baseCode,
       target: targetCode,
       rate: rate,
       timestamp: new Date(),
-      inverse: 1 / rate
+      inverse: 1 / rate,
     }
-    
+
     lastUpdated.value = new Date()
     calculateTargetAmount()
-    
   } catch (error) {
     console.error('Failed to fetch exchange rate:', error)
     // In a real app, you'd show an error message to the user
@@ -203,9 +202,9 @@ const fetchExchangeRate = async () => {
 }
 
 const formatTime = (date: Date): string => {
-  return date.toLocaleTimeString('en-US', { 
-    hour: '2-digit', 
-    minute: '2-digit' 
+  return date.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
   })
 }
 
@@ -213,7 +212,7 @@ const formatTime = (date: Date): string => {
 onMounted(() => {
   fetchExchangeRate()
 })
-</script> 
+</script>
 <template>
   <div class="min-h-screen bg-[#2b2b35] text-white">
     <!-- Main App Container -->
@@ -234,15 +233,12 @@ onMounted(() => {
                 @focus="setActivePanel('base')"
               />
             </div>
-            
+
             <!-- Swap Button -->
             <div class="flex justify-center">
-              <SwapButton 
-                @click="swapCurrencies"
-                :is-loading="isConverting"
-              />
+              <SwapButton @click="swapCurrencies" :is-loading="isConverting" />
             </div>
-            
+
             <!-- Target Currency Panel -->
             <div class="space-y-3">
               <CurrencyPanel
@@ -255,28 +251,26 @@ onMounted(() => {
               />
             </div>
           </div>
-          
+
           <!-- Exchange Rate Info -->
           <div class="mt-6 text-center text-sm text-gray-400">
             <div v-if="exchangeRate">
-              1 {{ baseCurrency.code }} = {{ exchangeRate.rate.toFixed(4) }} {{ targetCurrency.code }}
+              1 {{ baseCurrency.code }} = {{ exchangeRate.rate.toFixed(4) }}
+              {{ targetCurrency.code }}
             </div>
             <div v-if="lastUpdated" class="text-xs mt-1">
               Updated: {{ formatTime(lastUpdated) }}
             </div>
           </div>
         </div>
-        
+
         <!-- Calculator Section -->
         <div class="bg-[#3a3a47] rounded-lg p-6">
-          <CalculatorKeypad 
-            @key-press="handleCalculatorKey"
-            :disabled="isConverting"
-          />
+          <CalculatorKeypad @key-press="handleCalculatorKey" :disabled="isConverting" />
         </div>
       </div>
     </div>
-    
+
     <!-- Currency Selector Modal -->
     <CurrencySelector
       v-if="showCurrencySelector"

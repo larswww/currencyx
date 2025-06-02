@@ -1,11 +1,11 @@
 // Button variant types - type-safe design pattern
-export type ButtonVariant = 
-  | 'primary' 
-  | 'secondary' 
-  | 'danger' 
-  | 'success' 
-  | 'warning' 
-  | 'ghost' 
+export type ButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'danger'
+  | 'success'
+  | 'warning'
+  | 'ghost'
   | 'link'
 
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
@@ -36,4 +36,4 @@ export interface ButtonProps {
   loadingText?: string
   ariaLabel?: string
   type?: 'button' | 'submit' | 'reset'
-} 
+}

@@ -10,7 +10,7 @@ export const currencies: Currency[] = [
   { code: 'CAD', name: 'Canadian Dollar', flag: '🇨🇦', symbol: 'C$' },
   { code: 'AUD', name: 'Australian Dollar', flag: '🇦🇺', symbol: 'A$' },
   { code: 'CNY', name: 'Chinese Yuan', flag: '🇨🇳', symbol: '¥' },
-  
+
   // Other popular currencies
   { code: 'INR', name: 'Indian Rupee', flag: '🇮🇳', symbol: '₹' },
   { code: 'KRW', name: 'South Korean Won', flag: '🇰🇷', symbol: '₩' },
@@ -67,5 +67,5 @@ export const defaultBaseCurrency: Currency = currencies[0] // USD
 export const defaultTargetCurrency: Currency = currencies[1] // EUR
 
 export const findCurrencyByCode = (code: string): Currency | undefined => {
-  return currencies.find(currency => currency.code === code)
-} 
+  return currencies.find((currency) => currency.code === code)
+}

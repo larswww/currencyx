@@ -12,4 +12,4 @@ export interface CalculatorKey {
   value: string | number | CalculatorOperation
   type: 'number' | 'operation' | 'function'
   className?: string
-} 
+}

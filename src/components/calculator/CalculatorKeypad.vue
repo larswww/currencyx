@@ -26,7 +26,7 @@ defineEmits<Emits>()
       >
         Clear
       </BaseButton>
-      
+
       <BaseButton
         @click="$emit('keyPress', '⌫')"
         :disabled="disabled"
@@ -36,13 +36,8 @@ defineEmits<Emits>()
         icon-position="only"
         aria-label="Backspace"
       />
-      
-      <BaseButton
-        @click="$emit('keyPress', '÷')"
-        :disabled="disabled"
-        variant="warning"
-        size="lg"
-      >
+
+      <BaseButton @click="$emit('keyPress', '÷')" :disabled="disabled" variant="warning" size="lg">
         ÷
       </BaseButton>
 
@@ -57,13 +52,8 @@ defineEmits<Emits>()
       >
         {{ num }}
       </BaseButton>
-      
-      <BaseButton
-        @click="$emit('keyPress', '×')"
-        :disabled="disabled"
-        variant="warning"
-        size="lg"
-      >
+
+      <BaseButton @click="$emit('keyPress', '×')" :disabled="disabled" variant="warning" size="lg">
         ×
       </BaseButton>
 
@@ -78,13 +68,8 @@ defineEmits<Emits>()
       >
         {{ num }}
       </BaseButton>
-      
-      <BaseButton
-        @click="$emit('keyPress', '-')"
-        :disabled="disabled"
-        variant="warning"
-        size="lg"
-      >
+
+      <BaseButton @click="$emit('keyPress', '-')" :disabled="disabled" variant="warning" size="lg">
         −
       </BaseButton>
 
@@ -99,7 +84,7 @@ defineEmits<Emits>()
       >
         {{ num }}
       </BaseButton>
-      
+
       <BaseButton
         @click="$emit('keyPress', '+')"
         :disabled="disabled"
@@ -120,17 +105,12 @@ defineEmits<Emits>()
       >
         0
       </BaseButton>
-      
-      <BaseButton
-        @click="$emit('keyPress', '.')"
-        :disabled="disabled"
-        variant="ghost"
-        size="lg"
-      >
+
+      <BaseButton @click="$emit('keyPress', '.')" :disabled="disabled" variant="ghost" size="lg">
         .
       </BaseButton>
     </div>
-    
+
     <!-- Equals button as separate row for better UX -->
     <BaseButton
       @click="$emit('keyPress', '=')"
@@ -156,4 +136,4 @@ defineEmits<Emits>()
     @apply row-span-2;
   }
 }
-</style> 
+</style>
