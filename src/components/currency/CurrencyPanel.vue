@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 import type { Currency } from '@/types/currency'
+import { testIds } from '@/testIds'
 
 interface Props {
   currency: Currency
@@ -18,7 +19,6 @@ interface Emits {
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-// Format amount for display
 const displayAmount = computed(() => {
   if (props.amount === 0) return ''
   // Format number with up to 6 decimal places, removing trailing zeros
@@ -28,7 +28,6 @@ const displayAmount = computed(() => {
   })
 })
 
-// Handle amount input changes
 const handleAmountInput = (event: Event) => {
   const target = event.target as HTMLInputElement
   const value = target.value.replace(/[^0-9.,]/g, '') // Allow only numbers, commas, and periods
@@ -36,15 +35,13 @@ const handleAmountInput = (event: Event) => {
   // Convert comma to period for decimal point
   const normalizedValue = value.replace(',', '.')
 
-  // Parse the number
   const numericValue = parseFloat(normalizedValue) || 0
 
   emit('updateAmount', numericValue)
 }
 </script>
 <template>
-  <div class="currency-panel">
-    <!-- Currency Selector Button -->
+  <div class="currency-panel" :data-testid="testIds.currencyPanel.panel(currency.code)">
     <BaseButton
       @click="$emit('selectCurrency')"
       variant="ghost"
@@ -52,19 +49,17 @@ const handleAmountInput = (event: Event) => {
       block
       class="!p-3 !bg-[#4a4a57] hover:!bg-[#5a5a67] !justify-between"
       :class="{ 'ring-2 ring-blue-500': isActive }"
+      :data-testid="isActive ? testIds.currencyPanel.baseCurrencySelector : testIds.currencyPanel.targetCurrencySelector"
     >
       <div class="flex items-center space-x-3">
-        <!-- Currency Flag -->
         <span class="text-2xl">{{ currency.flag }}</span>
 
-        <!-- Currency Info -->
         <div class="text-left">
-          <div class="font-semibold text-white">{{ currency.code }}</div>
+          <div class="font-semibold text-white" :data-testid="isActive ? testIds.currencyPanel.baseCurrencyCode : testIds.currencyPanel.targetCurrencyCode">{{ currency.code }}</div>
           <div class="text-xs text-gray-400 truncate max-w-[120px]">{{ currency.name }}</div>
         </div>
       </div>
 
-      <!-- Dropdown Arrow -->
       <svg
         class="w-4 h-4 text-gray-400 group-hover:text-gray-300 transition-colors"
         fill="none"
@@ -80,7 +75,6 @@ const handleAmountInput = (event: Event) => {
       </svg>
     </BaseButton>
 
-    <!-- Amount Input -->
     <div class="mt-3">
       <input
         type="text"
@@ -95,6 +89,7 @@ const handleAmountInput = (event: Event) => {
         placeholder="0"
         inputmode="decimal"
         autocomplete="off"
+        :data-testid="isActive ? testIds.currencyPanel.baseAmountInput : testIds.currencyPanel.targetAmountInput"
       />
     </div>
   </div>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import BaseButton from '@/components/common/BaseButton.vue'
+import { testIds } from '@/testIds'
 
 interface Props {
   isLoading?: boolean
@@ -19,7 +20,6 @@ defineEmits<Emits>()
   min-height: 48px;
 }
 
-/* Custom rotation animation for 250ms ease-out as per PRD */
 .group:hover svg:not(.animate-spin) {
   transition: transform 250ms ease-out;
 }
@@ -35,6 +35,7 @@ defineEmits<Emits>()
     icon-position="only"
     aria-label="Swap currencies"
     class="swap-button group relative"
+    :data-testid="testIds.swapButton"
   >
     <!-- Swap Icon -->
     <svg

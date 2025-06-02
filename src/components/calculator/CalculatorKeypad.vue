@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import BaseButton from '@/components/common/BaseButton.vue'
 import type { CalculatorOperation } from '@/types/calculator'
+import { testIds } from '@/testIds'
 
 interface Props {
   disabled?: boolean
@@ -23,7 +24,7 @@ defineEmits<Emits>()
         variant="danger"
         size="lg"
         class="col-span-2"
-        data-testid="calc-button-clear"
+        :data-testid="testIds.calculator.clear"
       >
         Clear
       </BaseButton>
@@ -36,7 +37,7 @@ defineEmits<Emits>()
         icon="⌫"
         icon-position="only"
         aria-label="Backspace"
-        data-testid="calc-button-backspace"
+        :data-testid="testIds.calculator.backspace"
       />
 
       <BaseButton 
@@ -44,7 +45,7 @@ defineEmits<Emits>()
         :disabled="disabled" 
         variant="warning" 
         size="lg"
-        data-testid="calc-button-divide"
+        :data-testid="testIds.calculator.divide"
       >
         ÷
       </BaseButton>
@@ -57,7 +58,7 @@ defineEmits<Emits>()
         :disabled="disabled"
         variant="ghost"
         size="lg"
-        :data-testid="`calc-button-${num}`"
+        :data-testid="testIds.calculator.number(num)"
       >
         {{ num }}
       </BaseButton>
@@ -67,7 +68,7 @@ defineEmits<Emits>()
         :disabled="disabled" 
         variant="warning" 
         size="lg"
-        data-testid="calc-button-multiply"
+        :data-testid="testIds.calculator.multiply"
       >
         ×
       </BaseButton>
@@ -80,7 +81,7 @@ defineEmits<Emits>()
         :disabled="disabled"
         variant="ghost"
         size="lg"
-        :data-testid="`calc-button-${num}`"
+        :data-testid="testIds.calculator.number(num)"
       >
         {{ num }}
       </BaseButton>
@@ -90,7 +91,7 @@ defineEmits<Emits>()
         :disabled="disabled" 
         variant="warning" 
         size="lg"
-        data-testid="calc-button-subtract"
+        :data-testid="testIds.calculator.subtract"
       >
         −
       </BaseButton>
@@ -103,7 +104,7 @@ defineEmits<Emits>()
         :disabled="disabled"
         variant="ghost"
         size="lg"
-        :data-testid="`calc-button-${num}`"
+        :data-testid="testIds.calculator.number(num)"
       >
         {{ num }}
       </BaseButton>
@@ -114,7 +115,7 @@ defineEmits<Emits>()
         variant="warning"
         size="lg"
         class="row-span-2"
-        data-testid="calc-button-add"
+        :data-testid="testIds.calculator.add"
       >
         +
       </BaseButton>
@@ -126,7 +127,7 @@ defineEmits<Emits>()
         variant="ghost"
         size="lg"
         class="col-span-2"
-        data-testid="calc-button-0"
+        :data-testid="testIds.calculator.number(0)"
       >
         0
       </BaseButton>
@@ -136,7 +137,7 @@ defineEmits<Emits>()
         :disabled="disabled" 
         variant="ghost" 
         size="lg"
-        data-testid="calc-button-decimal"
+        :data-testid="testIds.calculator.decimal"
       >
         .
       </BaseButton>
@@ -150,7 +151,7 @@ defineEmits<Emits>()
       size="lg"
       block
       class="mt-3"
-      data-testid="calc-button-equals"
+      :data-testid="testIds.calculator.equals"
     >
       =
     </BaseButton>

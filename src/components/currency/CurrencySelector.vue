@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 import { currencies } from '@/data/currencies'
 import type { Currency } from '@/types/currency'
+import { testIds } from '@/testIds'
 
 interface Props {
   excludeCurrency?: Currency
@@ -18,7 +19,7 @@ defineEmits<Emits>()
 
 const searchQuery = ref('')
 
-// Filter currencies based on search query and exclude current currency
+
 const filteredCurrencies = computed(() => {
   const filtered = currencies.filter((currency) => {
     // Exclude the currency that's already selected in the other panel
@@ -26,7 +27,6 @@ const filteredCurrencies = computed(() => {
       return false
     }
 
-    // Filter by search query
     if (searchQuery.value) {
       const query = searchQuery.value.toLowerCase()
       return (
@@ -37,15 +37,12 @@ const filteredCurrencies = computed(() => {
     return true
   })
 
-  // Sort by common currencies first (already ordered in our data), then alphabetically
   return filtered
 })
 </script>
 <template>
-  <!-- Modal Backdrop -->
   <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-    <div class="bg-[#3a3a47] rounded-lg max-w-md w-full max-h-[80vh] flex flex-col">
-      <!-- Header -->
+    <div class="bg-[#3a3a47] rounded-lg max-w-md w-full max-h-[80vh] flex flex-col" :data-testid="testIds.currencySelector.modal">
       <div class="p-4 border-b border-gray-600">
         <div class="flex items-center justify-between">
           <h2 class="text-lg font-semibold text-white">Select Currency</h2>
@@ -57,6 +54,7 @@ const filteredCurrencies = computed(() => {
             icon-position="only"
             class="!p-2 hover:!bg-gray-600"
             aria-label="Close"
+            :data-testid="testIds.currencySelector.close"
           >
             <svg
               class="w-5 h-5 text-gray-400"
@@ -74,7 +72,6 @@ const filteredCurrencies = computed(() => {
           </BaseButton>
         </div>
 
-        <!-- Search Input -->
         <div class="mt-3">
           <input
             v-model="searchQuery"
@@ -82,11 +79,11 @@ const filteredCurrencies = computed(() => {
             placeholder="Search currencies..."
             class="w-full p-3 bg-[#4a4a57] border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
             autofocus
+            :data-testid="testIds.currencySelector.search"
           />
         </div>
       </div>
 
-      <!-- Currency List -->
       <div class="flex-1 overflow-y-auto">
         <div class="p-2">
           <BaseButton
@@ -97,6 +94,7 @@ const filteredCurrencies = computed(() => {
             size="md"
             block
             class="!p-3 hover:!bg-[#4a4a57] !justify-start"
+            :data-testid="testIds.currencySelector.option(currency.code)"
           >
             <div class="flex items-center space-x-3 w-full">
               <span class="text-2xl">{{ currency.flag }}</span>
@@ -110,7 +108,6 @@ const filteredCurrencies = computed(() => {
             </div>
           </BaseButton>
 
-          <!-- No Results -->
           <div v-if="filteredCurrencies.length === 0" class="p-8 text-center text-gray-400">
             No currencies found matching "{{ searchQuery }}"
           </div>

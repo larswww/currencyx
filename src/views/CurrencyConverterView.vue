@@ -9,6 +9,7 @@ import { useCurrency } from '@/composables/useCurrency'
 import { useExchangeRate } from '@/composables/useExchangeRate'
 import type { CalculatorOperation } from '@/types/calculator'
 import type { Currency } from '@/types/currency'
+import { testIds } from '@/testIds'
 
 // Use composables
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -98,7 +99,6 @@ onMounted(() => {
         <div class="bg-[#3a3a47] rounded-lg p-6 mb-6">
           <!-- Currency Panels Container -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-            <!-- Base Currency Panel -->
             <div class="space-y-3">
               <CurrencyPanel
                 :currency="baseCurrency"
@@ -107,15 +107,14 @@ onMounted(() => {
                 @select-currency="openCurrencySelector('base')"
                 @update-amount="handleBaseAmountUpdate"
                 @focus="setActivePanel('base')"
+                :data-testid="testIds.currencyPanel.baseCurrencyPanel"
               />
             </div>
 
-            <!-- Swap Button -->
             <div class="flex justify-center">
               <SwapButton @click="handleSwapCurrencies" :is-loading="isConverting" />
             </div>
 
-            <!-- Target Currency Panel -->
             <div class="space-y-3">
               <CurrencyPanel
                 :currency="targetCurrency"
@@ -124,30 +123,28 @@ onMounted(() => {
                 @select-currency="openCurrencySelector('target')"
                 @update-amount="handleTargetAmountUpdate"
                 @focus="setActivePanel('target')"
+                :data-testid="testIds.currencyPanel.targetCurrencyPanel"
               />
             </div>
           </div>
 
-          <!-- Exchange Rate Info -->
-          <div class="mt-6 text-center text-sm text-gray-400">
+          <div class="mt-6 text-center text-sm text-gray-400" :data-testid="testIds.exchangeRate.info">
             <div v-if="exchangeRate">
               1 {{ baseCurrency.code }} = {{ exchangeRate.rate.toFixed(4) }}
               {{ targetCurrency.code }}
             </div>
-            <div v-if="lastUpdated" class="text-xs mt-1">
+            <div v-if="lastUpdated" class="text-xs mt-1" :data-testid="testIds.exchangeRate.lastUpdated">
               Updated: {{ formatTime(lastUpdated) }}
             </div>
           </div>
         </div>
 
-        <!-- Calculator Section -->
         <div class="bg-[#3a3a47] rounded-lg p-6">
           <CalculatorKeypad @key-press="handleCalculatorKey" :disabled="isConverting" />
         </div>
       </div>
     </div>
 
-    <!-- Currency Selector Modal -->
     <CurrencySelector
       v-if="showCurrencySelector"
       :exclude-currency="activePanelType === 'base' ? targetCurrency : baseCurrency"
