@@ -1,0 +1,118 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Currency Converter Web App – Product Requirements Document (v1)
+
+1 — Purpose & Vision
+
+Provide a fast, intuitive, and mobile-friendly tool that lets anyone perform on-the-fly currency conversions while entering math expressions—all in a single view. The v1 release focuses on the core conversion + calculator workflow; later releases will add richer financial insight (charts) and personalization (favourites).
+
+⸻
+
+2 — Scope of v1
+
+Area	Included in v1	Deferred
+Currency conversion	✔ Base ↔ target amount fields✔ ~170 fiat currencies	Cryptocurrencies, commodities
+Rate source	✔ Live rates via 3rd-party REST API (updated ≤ 60 s)	Rate caching/offline
+Built-in calculator	✔ Basic arithmetic ( + – × ÷ = )✔ Decimal & clear keys	Scientific functions, parentheses
+Direction toggle	✔ Single swap button between base & target	—
+UI tabs	✔ Calculator (active)	Charts 📈, Favourites ★, Settings ⚙︎
+Platforms	✔ Responsive web (mobile-first, desktop)	Native apps
+
+
+⸻
+
+3 — Goals
+	1.	Accurate: show current mid-market exchange rate with timestamp.
+	2.	Instant: <200 ms perceived latency for conversion & keypress feedback.
+	3.	Accessible: WCAG 2.1 AA, full keyboard support.
+	4.	Responsive: single codebase scales from 320 px mobile to ≥1280 px desktop.
+
+4 — Non-Goals (Out of Scope for v1)
+	•	Historical charts
+	•	Favourite currency pairs
+	•	Dark-mode toggle (will inherit system theme for now)
+	•	Account system / user sign-in
+
+⸻
+
+5 — Target Audience
+	•	Travellers needing quick conversions on the go
+	•	Online shoppers comparing overseas prices
+	•	Remote workers/freelancers invoicing in multiple currencies
+
+⸻
+
+6 — Assumptions & Dependencies
+	•	Reliable exchange-rate provider (e.g., ExchangeRatesAPI.io) with ≤30 k requests/day free tier.
+	•	Modern browsers (ES2019+, CSS Grid/Flexbox support).
+	•	No PWA/offline requirement in v1.
+
+⸻
+
+7 — User Stories
+
+ID	As a…	I want…	So that…
+US-1	Traveller	to enter 774 USD and see its value in EUR	I know how much € I’ll spend
+US-2	Freelancer	to flip the conversion (EUR→USD) with one tap	I can quote clients in their currency
+US-3	Shopper	to use +/–/×/÷ before converting	I can compare bundle prices quickly
+US-4	All users	visual confirmation of the current rate & last-updated time	I trust the figure is up to date
+
+⸻
+
+8 — Functional Requirements
+
+ID	Requirement
+FR-1	App shall display two currency panels (base, target) each showing code, name, flag, and amount field.
+FR-2	Selecting either panel opens searchable currency list modal sorted by common locales + alphabetic.
+FR-3	Pressing the swap button instantly exchanges base and target currencies and recalculates result.
+FR-4	Calculator keypad supports 0-9, decimal, +, –, ×, ÷, C (clear), ⌫ (backspace), and = (evaluate).
+FR-5	Entering a math expression followed by = updates the amount in the active field before conversion.
+FR-6	App fetches latest mid-market rate for the selected pair on any of: amount change, currency change, rate TTL expiry.
+FR-7	Rate timestamp (HH:MM device-local) and inverse rate text appear below the panels.
+
+9 — Non-Functional Requirements
+
+ID	Requirement
+NFR-1	First Contentful Paint ≤ 1.5 s on 3G network (Lighthouse).
+NFR-2	All interactive elements meet 44 × 44 px minimum touch target.
+NFR-3	Unit tests cover ≥80 % of util & calculation logic.
+NFR-4	App must handle API failure gracefully with inline error and retry.
+
+
+⸻
+
+10 — UX/UI Guidelines
+	•	Layout: two-column header section (base vs target) over calculator grid.
+	•	Swap button: centred between columns; rotate-animation 250 ms ease-out.
+	•	Typography: Large sans-serif figure style for amounts (≥48 px on mobile). Secondary metadata in 14 px.
+	•	Colour: Dark theme (charcoal #2b2b35) with high-contrast text; accent blue for primary action.
+	•	Breakpoint adjustments:
+	•	≤480 px: panels stack vertically, keypad fills width.
+	•	≥768 px: fixed 420 px app card centred; keypad gains hover states.
+
+⸻
+
+11 — Success Metrics
+	•	🡅 Daily Active Users ≥ 5 k in first 3 months.
+	•	⏱ Median key-to-result latency <150 ms.
+	•	🛑 Crash-free sessions ≥ 99.8 %.
+
+12 — Timeline & Milestones (tentative)
+
+Date	Milestone
+Week 0	Kick-off & tech stack selection
+Week 2	Prototype UI & API integration
+Week 4	Beta (feature-complete) + internal QA
+Week 5	Public launch (v1)
+
+13 — Open Questions
+	1.	Which rate provider offers both reliability and free tier within expected volume?
+	2.	Do we need localisation beyond currency list (e.g., UI strings)?
+	3.	Should v1 include a light mode toggle if the OS is in light theme?
+
+⸻
+
+Last updated: {{DATE}}
